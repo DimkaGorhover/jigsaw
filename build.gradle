@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id "org.springframework.boot" version "2.1.9.RELEASE"
+    id "io.spring.dependency-management" version "1.0.8.RELEASE"
+    id "org.gradle.java.experimental-jigsaw" version "0.1.1"
+}
+
+ext {
+    versions = [
+            lombok : "1.18.4",
+            springBom: "Cairo-SR8" // Brussels-SR17
+    ]
+}
+
+wrapper {
+    gradleVersion = "5.6.2"
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+group 'org.gd'
+version '1.0'
+
+javaModule.name = 'org.gd.jigsaw'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'https://projectlombok.org/edge-releases'
+        content {
+            includeGroup 'org.projectlombok'
+        }
+    }
+    maven {
+        name "Spring GA Repository"
+        url 'http://repo.spring.io/release'
+        content {
+            includeGroup 'org.springframework'
+            includeGroup 'org.springframework.boot'
+            includeGroup 'io.spring'
+            includeGroup 'io.spring.dependency-management'
+        }
+    }
+}
+
+dependencyManagement {
+    imports {
+        // https://repo.spring.io/release/io/spring/platform/platform-bom/
+        mavenBom "io.spring.platform:platform-bom:${versions.springBom}"
+    }
+    dependencies {
+        dependency "org.projectlombok:lombok:${versions.lombok}"
+    }
+}
+
+dependencies {
+
+    annotationProcessor("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok")
+    testCompile("org.projectlombok:lombok")
+
+    compile "org.springframework.boot:spring-boot-starter-webflux"
+    compile "org.springframework.boot:spring-boot-starter-jdbc"
+
+    compile 'com.h2database:h2'
+}
